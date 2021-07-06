@@ -1,7 +1,7 @@
 {
-  "name": "cmd-handler-default",
+  "name": "pikmin-bot",
   "version": "1.0.0",
-  "description": "cmd handler default",
+  "description": "Discord bot",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/alixy-miyuki/cmdhandlerdefault"
+    "url": "https://github.com/Cryodream1/Pikmin-Bot"
   },
   "keywords": [
-    "cmd-handler-default"
+    "pikmin-bot"
   ],
-  "author": "alixy",
+  "author": "Cryodream",
   "license": "ISC",
   "dependencies": {
     "@replit/database": "^2.0.1",
