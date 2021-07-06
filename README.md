@@ -1,15 +1,14 @@
-Setting Up the Bot 
+Adding the bot
 =
-1. Go to `Config.json` and configure your prefix for the bot.
-2. Make a `.env` file like `env-example` and put your bot token like shown on `env-example`.
-3. Run the bot.
-4. Congrats, You Done it.
+1. Go to https://discord.com/api/oauth2/authorize?client_id=857763038161666069&permissions=4294967287&scope=bot
+2. Authorize it
+3. Congrats, the bot is in the server
 
 
 
-Making a Command
+Forking
 =
-1. Make a Folder inside `Commands` Folder for example like `info` folder.
-2. Make a file called `commandname.js` (must lowercase) inside that sub-folder you make or use existing folder.
-3. Copy `CMD-example` and paste it on your new command file and start to code. After you done save it, and re-run the bot
-4. Also update the `help` `( commands/info/help.js )` command if u adding new command since it not Dynamic.
+1. Create a fork of the page
+2. To create a command, make a new file called `commandname.js` (must be lowercase)
+3. For the code inside said file, copy CMD-example and paste it on your command file
+4. Be sure to update the help command
