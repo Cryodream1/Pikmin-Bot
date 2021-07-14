@@ -6,13 +6,20 @@ const { join } = require('path');
 const config = require('./config.json');
 const express = require("express")
 const app = express()
+const { token } = require('../token.json')
 client.config = config;
 
 app.listen(3000, () => {
   console.log("Im ready")
 })
 
-client.login(process.env.token2)
+if(!token) {
+	client.login(process.env.token2)
+} else {
+	client.login(token)
+}
+
+
 client.on("error", console.error);
 
 app.get("/", (req, res) => {
