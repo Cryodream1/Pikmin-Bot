@@ -1,5 +1,5 @@
 const Discord = require('discord.js')
-const Database = require("@replit/database")
+const Database = require('@replit/database')
 const db = new Database()
 const { currency } = require('../../config.json');
 
