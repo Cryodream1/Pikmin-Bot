@@ -1,33 +1,58 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const Database = require("@replit/database")
+const db = new Database()
+const guild = new Discord.Guild()
 const { default_prefix } = require('./config.json');
 const { readdirSync } = require('fs');
 const { join } = require('path');
+const { token } = require('../token.json')
 const config = require('./config.json');
 const express = require("express")
 const app = express()
-const { token } = require('../token.json')
 client.config = config;
 
 app.listen(3000, () => {
   console.log("Im ready")
 })
 
-if(!token) {
-	client.login(process.env.token2)
-} else {
+if(config.isReplit === "No") {
 	client.login(token)
+} else {
+	client.login(process.env.token2)
 }
 
 
+
 client.on("error", console.error);
+
+client.on('messageReactionAdd', async (reaction, user) => {
+  let id = await db.get(`ticketId_${reaction.message.guild.id}`)
+  console.log(id)
+  if(reaction.message.id === id && reaction.emoji.name === '🎟️') {
+    reaction.user.remove(user)
+
+    reaction.message.guild.channels.create(`ticket-${user.username}`), {
+      permissionOverwrites: [
+        {
+          id: user.id,
+          allow: ['SEND_MESSAGES', 'VIEW_CHANNEL']
+        },
+        {
+          id: reaction.message.guild.roles.everyone,
+          deny: ['VIEW_CHANNEL']
+        }
+      ]
+    }
+  }
+})
 
 app.get("/", (req, res) => {
   res.send("Never gonna give you up, never gonna let you down, never gonna run around and desert you, never gonna make you cry, never gonna say goodbye, never gonna tell a lie, to hurt you.")
 })
 
 client.on("ready", () => {
-  client.user.setPresence({ activity: { name: "Just remember, the prefix is ;"}})
+  client.user.setPresence({ activity: { name: "Just remember, the prefix is ;"}, status: "dnd"})
 })
 
 client.commands = new Discord.Collection();

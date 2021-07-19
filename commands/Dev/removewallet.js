@@ -1,36 +1,86 @@
 const Discord = require('discord.js')
-const Database = require("@replit/database")
-const db = new Database()
+const mongoose = require("mongoose")
+const privatebotconfig = require('../../../privatebotconfig.json')
 const { currency } = require('../../config.json');
+
+mongoose.connect(privatebotconfig.mongoPass, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+
+const Data = require("../models/data.js")
 
 module.exports = {
     name: "removewallet", // name of the command
-    description: "test command", // description
+    description: "Add to the bank", // description
 
     async run (client, message, args) {
       if(message.author.id === "353353241557204994")
       {
-        let number = message.content.substring(10)
+        let number = message.content.substring(13)
         let amount = parseInt(number.split(" ")[1])
         let memberadd = message.mentions.members.first()
         if(!amount) {
           message.channel.send("You idiot you did it backwards again")
         } else {
             if(!memberadd) {
-              let currentBalance = await db.get(`wallet_${message.author.id}`)
-              if(currentBalance === null) currentBalance = 0
-              await db.set(`wallet_${message.author.id}`, currentBalance - amount)
-              message.channel.send(`Sucessfully added ${amount}${currency} to your bank`)
+            Data.findOne({
+              userID: message.author.id
+            }, (err, data) => {
+              if(!data) {
+                const newData = new Data({
+            name: message.author.username,
+            userID: message.author.id,
+            lb: "all",
+            job: "",
+            wallet: amount,
+            bank: 0,
+            total: amount,
+            daily: 0,
+            weekly: 0,
+            monthly: 0,
+            yearly: 0,
+                })
+                newData.save().catch(err => console.log(err))
+              } else {
+                data.wallet -= amount
+                data.total -= amount
+                data.save().catch(err => console.log(err))
+              }
+            })
+            message.channel.send(`Sucessfully removed ${currency}${amount} from your wallet`)
             } else {
                 let memberaddid = memberadd.user.id
-                let currentBalance2 = await db.get(`wallet_${memberaddid}`)
-                if(currentBalance2 === null) currentBalance2 = 0
-                await db.set(`wallet_${memberaddid}`, currentBalance2 - amount)
-                message.channel.send(`Successfully removed ${amount}${currency} to ${memberadd.user.username}'s wallet'`)
+                Data.findOne({
+                  userID: memberaddid
+                }, (err, data) => {
+                  
+                  if(!data) {
+                    const newData = new Data({
+                      name: memberadd.user.username,
+                      userID: memberaddid,
+                      job: "",
+                      wallet: 0,
+                      bank: 0,
+                      total: 0,
+                      daily: 0,
+                      weekly: 0,
+                      monthly: 0,
+                      yearly: 0,
+                    })
+                    newData.save().catch(err => console.log(err))
+                  } else {
+                    if(wallet === 0) return message.channel.send("They dont have any money!")
+                    data.wallet -= amount
+                    data.total -= amount
+                    data.save().catch(err => console.log(err))
+                    message.channel.send(`Successfully removed ${currency}${amount} from ${memberadd.user.username}'s wallet'`)
+                  }
+                })
               }
           }
       } else {
-        message.channel.send("You cant use that")
+      message.channel.send("You cant use that")
       } 
     }
 }

@@ -1,7 +1,3 @@
-For devs
-=
-Currently the bot is bugged in a way that wont allow the economy commands work, im currently finding a way to fix this :D
-
 Adding the bot
 =
 1. Go to https://discord.com/api/oauth2/authorize?client_id=857763038161666069&permissions=4294967287&scope=bot

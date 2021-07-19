@@ -1,5 +1,6 @@
 {
   "everyoneMention": false,
   "default_prefix": ";",
-  "currency": "$"
+  "currency": "$",
+  "isReplit": "No"
 }

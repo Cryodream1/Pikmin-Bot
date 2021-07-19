@@ -9,7 +9,7 @@ module.exports = {
     async run (client, message, args){
         const memcmds = new Discord.MessageEmbed()
         .setTitle("Member commands")
-        .setDescription("rps, rng, cf, ttt, invite, and kill")
+        .setDescription("rps, rng, cf, ttt, rr, invite, and kill")
         .setColor("BLUE")
         .setTimestamp()
 
@@ -27,13 +27,13 @@ module.exports = {
 
         const devcmds = new Discord.MessageEmbed()
         .setTitle("Developer commands")
-        .setDescription("reset, addwork, jobreset, removewallet, removebank, whatjob, worktimaddwallet, and addbank")
+        .setDescription("reset, removewallet, removebank, addwallet, addtotal, removetotal, and addbank")
         .setColor("BLUE")
         .setTimestamp()
 
         const ecocmds = new Discord.MessageEmbed()
         .setTitle("Economy commands")
-        .setDescription("balance, gamble, gamblerps, deposit, withdraw, daily, weekly, monthly, pay, rob, work, and yearly")
+        .setDescription("balance, gamble, gamblerps, deposit, withdraw, daily, weekly, monthly, pay, and yearly")
         .setColor("BLUE")
         .setTimestamp()
 
