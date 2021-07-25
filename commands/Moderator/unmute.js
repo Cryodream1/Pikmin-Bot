@@ -24,7 +24,7 @@ module.exports = {
               }
           } else {
               member.roles.remove(muterole)
-              message.channel.send("Member has been succesfully muted.")
+              message.channel.send("Member has been succesfully unmuted.")
             }
         }
       }

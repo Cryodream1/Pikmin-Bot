@@ -6,6 +6,7 @@ const guild = new Discord.Guild()
 const { default_prefix } = require('./config.json');
 const { readdirSync } = require('fs');
 const { join } = require('path');
+const { token } = require('../token.json')
 const config = require('./config.json');
 const express = require("express")
 const app = express()
@@ -15,30 +16,15 @@ app.listen(3000, () => {
   console.log("Im ready")
 })
 
-client.login(process.env.token2)
+if(config.isReplit === "No") {
+	client.login(token)
+} else {
+	client.login(process.env.token2)
+}
+
+
 
 client.on("error", console.error);
-
-client.on('messageReactionAdd', async (reaction, user) => {
-  let id = await db.get(`ticketId_${reaction.message.guild.id}`)
-  console.log(id)
-  if(reaction.message.id === id && reaction.emoji.name === '🎟️') {
-    reaction.user.remove(user)
-
-    reaction.message.guild.channels.create(`ticket-${user.username}`), {
-      permissionOverwrites: [
-        {
-          id: user.id,
-          allow: ['SEND_MESSAGES', 'VIEW_CHANNEL']
-        },
-        {
-          id: reaction.message.guild.roles.everyone,
-          deny: ['VIEW_CHANNEL']
-        }
-      ]
-    }
-  }
-})
 
 app.get("/", (req, res) => {
   res.send("Never gonna give you up, never gonna let you down, never gonna run around and desert you, never gonna make you cry, never gonna say goodbye, never gonna tell a lie, to hurt you.")
@@ -51,12 +37,12 @@ client.on("ready", () => {
 client.commands = new Discord.Collection();
 client.cooldowns = new Discord.Collection();
 
-const commandFolders = readdirSync('./commands');
+const commandFolders = readdirSync('/home/pi/Documents/Pikmin-Bot/Pikmin-Bot-main/commands');
 
 for (const folder of commandFolders) {
-	const commandFiles = readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
+	const commandFiles = readdirSync(`/home/pi/Documents/Pikmin-Bot/Pikmin-Bot-main/commands/${folder}`).filter(file => file.endsWith('.js'));
 	for (const file of commandFiles) {
-		const command = require(`./commands/${folder}/${file}`);
+		const command = require(`/home/pi/Documents/Pikmin-Bot/Pikmin-Bot-main/commands/${folder}/${file}`);
 		client.commands.set(command.name, command);
 	}
 }

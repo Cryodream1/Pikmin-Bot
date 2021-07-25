@@ -27,13 +27,13 @@ module.exports = {
 
         const devcmds = new Discord.MessageEmbed()
         .setTitle("Developer commands")
-        .setDescription("reset, addwork, jobreset, removewallet, removebank, whatjob, worktime, setjob, resetjobtime, addwallet, and addbank")
+        .setDescription("reset, removewallet, removebank, addwallet, addtotal, removetotal, and addbank")
         .setColor("BLUE")
         .setTimestamp()
 
         const ecocmds = new Discord.MessageEmbed()
         .setTitle("Economy commands")
-        .setDescription("balance, gamble, gamblerps, deposit, withdraw, daily, weekly, monthly, pay, rob, work, and yearly")
+        .setDescription("balance, shop, buy, sell, inventory, gamble, gamblerps, deposit, withdraw, daily, weekly, monthly, pay, and yearly")
         .setColor("BLUE")
         .setTimestamp()
 

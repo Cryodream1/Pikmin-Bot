@@ -1,42 +1,68 @@
 const Discord = require('discord.js')
-const Database = require("@replit/database")
-const db = new Database()
+const mongoose = require("mongoose")
+const privatebotconfig = require('../../../privatebotconfig.json')
 const { currency } = require('../../config.json');
+
+mongoose.connect(privatebotconfig.mongoPass, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+
+const Data = require("../models/data.js")
 
 module.exports = {
     name: "balance", // name of the command
     description: "Check your economy balance", // description
 
     async run (client, message, args) {
-      let balance = await db.get(`wallet_${message.author.id}`)
-      let bank = await db.get(`bank_${message.author.id}`)
-      let member20000 = message.mentions.members.first()
-      let currentWalletBalance = await db.get(`wallet_${message.author.id}`)
-      let currentBankBalance = await db.get(`bank_${message.author.id}`)
-      if(!member20000) {
-        if(currentWalletBalance === null) currentWalletBalance = 0
-        if(currentBankBalance === null) currentBankBalance = 0
 
-      
-        let moneyembed = new Discord.MessageEmbed()
-        .setTitle(`${message.author.username}'s Balance`)
-        .setDescription(`Wallet: ${currentWalletBalance}${currency}\nBank: ${currentBankBalance}${currency}`)
-        .setColor("BLUE")
-        .setThumbnail(message.author.displayAvatarURL({dynamic: true}))
-
-        message.channel.send(moneyembed)
+      const member100 = message.mentions.members.first()
+      if(!member100) {
+        var user = message.author
       } else {
-        let memberid = member20000.user.id
-        let currentWalletBalance2 = await db.get(`wallet_${memberid}`)
-        let currentBankBalance2 = await db.get(`bank_${memberid}`)
-        if(currentWalletBalance2 === null) currentWalletBalance2 = 0
-        if(currentBankBalance2 === null) currentBankBalance2 = 0
-        let pingembed = new Discord.MessageEmbed()
-        .setTitle(`${member20000.user.username}'s Balance`)
-        .setDescription(`Wallet: ${currentWalletBalance2}${currency}\nBank: ${currentBankBalance2}${currency}`)
-        .setColor("BLUE")
-        .setThumbnail(member20000.user.displayAvatarURL({dynamic: true}))
-        message.channel.send(pingembed)
+        var user = member100.user
       }
+
+      Data.findOne({
+        userID: user.id
+      }, (err, data) => {
+        if(err) console.log(err)
+        if(!data) {
+          const newData = new Data({
+            name: user.username,
+            userID: user.id,
+            lb: "all",
+            job: "",
+            wallet: 0,
+            bank: 0,
+            total: 0,
+            daily: 0,
+            weekly: 0,
+            monthly: 0,
+            yearly: 0,
+            item1: 0,
+            item2: 0,
+            item3: 0,
+            item4: 0,
+            item5: 0,
+            item6: 0,
+            item7: 0,
+            item8: 0,
+          })
+          newData.save().catch(err => console.log(err))
+          let embed = new Discord.MessageEmbed()
+          .setTitle(`${user.username}'s balance`)
+          .setDescription(`Wallet: ${currency}0\nBank: ${currency}0`)
+          .setThumbnail(message.author.displayAvatarURL({dynamic: true}))
+          return message.channel.send(embed)
+        } else {
+          let embed = new Discord.MessageEmbed()
+          .setTitle(`${user.username}'s balance`)
+          .setDescription(`Wallet: ${currency}${data.wallet}\nBank: ${currency}${data.bank}`)
+          .setThumbnail(message.author.displayAvatarURL({dynamic: true}))
+          return message.channel.send(embed)
+        }
+      })
+
     }
 }
