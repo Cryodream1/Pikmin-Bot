@@ -5,7 +5,7 @@ const { currency } = require('../../config.json');
 
 module.exports = {
     name: "jobreset", // name of the command
-    description: "Reset the job of someone", // description
+    description: "Reset the wallet and balance of someone", // description
 
     async run (client, message, args) {
       let member100 = message.mentions.members.first()

@@ -6,7 +6,6 @@ const guild = new Discord.Guild()
 const { default_prefix } = require('./config.json');
 const { readdirSync } = require('fs');
 const { join } = require('path');
-const { token } = require('../token.json')
 const config = require('./config.json');
 const express = require("express")
 const app = express()
@@ -16,13 +15,7 @@ app.listen(3000, () => {
   console.log("Im ready")
 })
 
-if(config.isReplit === "No") {
-	client.login(token)
-} else {
-	client.login(process.env.token2)
-}
-
-
+client.login(process.env.token2)
 
 client.on("error", console.error);
 

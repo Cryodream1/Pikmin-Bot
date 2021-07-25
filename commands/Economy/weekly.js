@@ -1,82 +1,34 @@
 const Discord = require('discord.js')
-const mongoose = require("mongoose")
-const privatebotconfig = require('../../../privatebotconfig.json')
+const Database = require("@replit/database")
+const db = new Database()
 const { currency } = require('../../config.json');
-
-mongoose.connect(privatebotconfig.mongoPass, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-
-const Data = require("../models/data.js")
-
-
 
 module.exports = {
     name: "weekly", // name of the command
-    description: "Collect your daily reward", // description
+    description: "Collect your weekly reward", // description
 
     async run (client, message, args) {
-      Data.findOne({
-        userID: message.author.id
-    }, (err, data) => {
-      if(err) console.log(err);
-      let reward = 250
-      let embedailyyes= new Discord.MessageEmbed()
-        .setTitle(`${message.author.username} You claimed ${reward}${currency}`)
-        .setDescription(`Come back next week to claim your weekly reward again`)
-        .setThumbnail(message.author.displayAvatarURL({dynamic: true}))
-      if(!data) {
-        const newData = new Data({
-          name: message.author.username,
-          userID: message.author.id,
-          lb: "all",
-          job: "",
-          wallet: reward,
-          bank: 0,
-          total: reward,
-          daily: 0,
-          weekly: Date.now(),
-          monthly: 0,
-          yearly: 0,
-        })
-        newData.save().catch(err => console.log(err))
-        const check = data.weekly
-        const timeout = 604800000;
-        if(check !== null && timeout - (Date.now() - check) > 0) {
-          const ms = require("pretty-ms")
-          const timeLeft = ms(timeout - (Date.now() - check))
-          let embedailyno = new Discord.MessageEmbed()
-          .setTitle(`${message.author.username} You already claimed your weekly reward!`)
-          .setDescription(`You can claim it again in ${timeLeft}`)
-          .setThumbnail(message.author.displayAvatarURL({dynamic: true}))
-          message.channel.send(embedailyno)
-        } else {
-          data.wallet += reward
-          data.weekly = Date.now();
-          data.save().catch(err => console.log(err))
-
-          return message.channel.send(embedailyyes)
-        }
-      }
-      const check = data.weekly
+      const check = await db.get(`weeklyCheck_${message.author.id}`);
       const timeout = 604800000;
-        if(check !== null && timeout - (Date.now() - check) > 0) {
-          const ms = require("pretty-ms")
-          const timeLeft = ms(timeout - (Date.now() - check))
-          let embedailyno = new Discord.MessageEmbed()
-          .setTitle(`${message.author.username} You already claimed your weekly reward!`)
-          .setDescription(`You can claim it again in ${timeLeft}`)
-        . setThumbnail(message.author.displayAvatarURL({dynamic: true}))
-        message.channel.send(embedailyno)
-        } else {
-          data.wallet += reward
-          data.weekly = Date.now();
-          data.total = (data.wallet + data.bank)
-          data.save().catch(err => console.log(err))
-
-          return message.channel.send(embedailyyes)
-        }
-      })
+      if(check !== null && timeout - (Date.now() - check) > 0) {
+        const ms = require("pretty-ms")
+        const timeLeft = ms(timeout - (Date.now() - check))
+        let embedweeklyno = new Discord.MessageEmbed()
+        .setTitle(`${message.author.username} You already claimed your weekly reward!`)
+        .setDescription(`You can claim it again in ${timeLeft}`)
+        .setThumbnail(message.author.displayAvatarURL({dynamic: true}))
+        message.channel.send(embeweeklyno)
+      } else {
+        let reward = 500
+        let embedweeklyyes= new Discord.MessageEmbed()
+        .setTitle(`${message.author.username} You claimed ${reward}${currency}`)
+        .setDescription(`Comeback next week to claim your weekly reward again`)
+        .setThumbnail(message.author.displayAvatarURL({dynamic: true}))
+        let currentBalance = await db.get(`wallet_${message.author.id}`)
+        message.channel.send(embedweeklyyes)
+        if(currentBalance === null) currentBalance = 0
+        await db.set(`wallet_${message.author.id}`, currentBalance + reward)
+        await db.set(`weeklyCheck_${message.author.id}`, Date.now())
+      }
     }
 }

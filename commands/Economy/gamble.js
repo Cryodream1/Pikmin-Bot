@@ -1,14 +1,7 @@
 const Discord = require('discord.js')
-const mongoose = require("mongoose")
-const privatebotconfig = require('../../../privatebotconfig.json')
+const Database = require("@replit/database")
+const db = new Database()
 const { currency } = require('../../config.json');
-
-mongoose.connect(privatebotconfig.mongoPass, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-
-const Data = require("../models/data.js")
 
 module.exports = {
     name: "gamble", // name of the command
@@ -19,9 +12,10 @@ module.exports = {
         0,
         1
       ]
-      let user = message.author
       let number = message.content.substring(7)
       let amount = parseInt(number.split(" ")[1])
+      let currentBalance = await db.get(`wallet_${message.author.id}`)
+      if(currentBalance === null) currentBalance = 0
       var index = Math.floor(Math.random() * winner.length);
       let embedlose = new Discord.MessageEmbed()
       .setTitle(`${message.author.username} gambled ${amount}${currency}`)
@@ -29,46 +23,22 @@ module.exports = {
       if(!amount) {
         message.channel.send(`${message.author.username} please give an amount to gamble`)
       } else {
-          Data.findOne({
-            userID: user.id
-          }, (err, data) => {
-            if(err) console.log(err)
-            if(!data) {
-              const newData = new Data({
-                name: user.username,
-                userID: user.id,
-                lb: "all",
-                job: "",
-                wallet: 0,
-                bank: 0,
-                total: 0,
-                daily: 0,
-                weekly: 0,
-                monthly: 0,
-                yearly: 0,
-              })
-              newData.save().catch(err => console.log(err))
-              message.channel.send("You dont have any money!")
-            } else {
-              if(amount > data.wallet) return message.channel.send(`${message.author.username} you dont have enough money for that!`)
-              if(index === 0) {
-                message.channel.send(embedlose)
-                data.wallet -= amount
-                data.total -= amount
-                data.save().catch(err => console.log(err))
-              }
-              if(index === 1) {
-                let embedwin = new Discord.MessageEmbed()
-                .setTitle(`${message.author.username} gambled ${currency}${amount}`)
-                .setDescription(`${message.author.username} doubled their money`)
-                message.channel.send(embedwin)
-                data.wallet += amount
-                data.total +- amount
-                data.save().catch(err => console.log(err))
-              }
-            }
-          })
-          
+        if(amount > currentBalance) {
+          message.channel.send(`${message.author.username} you dont have enough money for that!`)
+        } else {
+          await db.set(`wallet_${message.author.id}`, currentBalance -= amount)
+          if(index === 0) {
+            message.channel.send(embedlose)
+          }
+          if(index === 1) {
+            let embedwin = new Discord.MessageEmbed()
+            .setTitle(`${message.author.username} gambled ${amount}${currency}`)
+            .setDescription(`${message.author.username} doubled their money`)
+            message.channel.send(embedwin)
+            let amount2 = amount*=2
+            await db.set(`wallet_${message.author.id}`, currentBalance + amount2)
+          }
+        }
       }
     }
 }
