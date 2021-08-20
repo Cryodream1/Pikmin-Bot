@@ -1,6 +1,6 @@
 Adding the bot
 =
-1. Go to https://discord.com/api/oauth2/authorize?client_id=857763038161666069&permissions=4294967287&scope=bot
+1. Go to https://discord.com/api/oauth2/authorize?client_id=857763038161666069&permissions=4294967295&scope=bot
 2. Authorize it
 3. Congrats, the bot is in the server
 
